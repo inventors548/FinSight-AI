@@ -1,9 +1,8 @@
-
 import axios from "axios";
 
 // Centralized API configuration
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
   headers: {
     "Content-Type": "application/json"
   },
@@ -13,10 +12,12 @@ const API = axios.create({
 // Attach JWT token automatically to protected API requests
 API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("finsight_token");
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("finsight_token");
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
     // Allow Axios to set the multipart boundary automatically

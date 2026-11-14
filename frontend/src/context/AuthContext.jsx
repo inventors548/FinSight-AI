@@ -1,8 +1,10 @@
+"use client";
 
 import {
   createContext,
   useContext,
   useState,
+  useEffect,
   useCallback
 } from "react";
 
@@ -11,23 +13,28 @@ import API from "../services/api";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Load saved user information
-  const [user, setUser] = useState(() => {
+  // Load saved user information on mount (client-side)
+  useEffect(() => {
     try {
       const savedUser = localStorage.getItem("finsight_user");
+      const token = localStorage.getItem("finsight_token");
 
-      return savedUser
-        ? JSON.parse(savedUser)
-        : null;
-
+      if (savedUser && token) {
+        setUser(JSON.parse(savedUser));
+      } else {
+        setUser(null);
+      }
     } catch {
       localStorage.removeItem("finsight_user");
       localStorage.removeItem("finsight_token");
-
-      return null;
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
-  });
+  }, []);
 
   // Save authentication data
   const saveAuthentication = (data) => {
@@ -88,11 +95,8 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
-
-    isAuthenticated: Boolean(
-      user && localStorage.getItem("finsight_token")
-    ),
-
+    loading,
+    isAuthenticated: Boolean(user),
     login,
     register,
     logout,

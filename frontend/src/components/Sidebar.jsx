@@ -1,3 +1,4 @@
+"use client";
 
 import {
   LayoutDashboard,
@@ -6,11 +7,10 @@ import {
   ChartNoAxesCombined,
   Target,
   BrainCircuit,
-  Settings,
   LogOut
 } from "lucide-react";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
@@ -47,13 +47,13 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const { logout } = useAuth();
 
   const handleNavigation = (item) => {
     if (item.path) {
-      navigate(item.path);
+      router.push(item.path);
     } else {
       toast("This feature is coming soon!", {
         icon: "🚧"
@@ -64,7 +64,7 @@ export default function Sidebar() {
   const handleLogout = () => {
     logout();
     toast.success("Logged out successfully");
-    navigate("/login", { replace: true });
+    router.replace("/login");
   };
 
   return (
@@ -96,7 +96,7 @@ export default function Sidebar() {
           const Icon = item.icon;
 
           const isActive =
-            item.path === location.pathname;
+            item.path === pathname;
 
           return (
             <button
@@ -123,18 +123,6 @@ export default function Sidebar() {
 
       {/* Bottom Actions */}
       <div className="border-t border-slate-800 pt-4 space-y-2">
-
-        <button
-          onClick={() =>
-            toast("Settings are coming soon!", {
-              icon: "⚙️"
-            })
-          }
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition"
-        >
-          <Settings size={19} />
-          Settings
-        </button>
 
         <button
           onClick={handleLogout}

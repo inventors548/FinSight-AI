@@ -1,9 +1,9 @@
+"use client";
 
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 import {
   Search,
-  Bell,
   UserCircle
 } from "lucide-react";
 
@@ -11,7 +11,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 px-6 py-5">
@@ -40,18 +40,10 @@ export default function Header() {
           />
         </div>
 
-        <button
-          type="button"
-          className="text-slate-400 hover:text-white transition"
-          aria-label="Notifications"
-        >
-          <Bell size={21} />
-        </button>
-
         {/* Clickable Profile */}
         <button
           type="button"
-          onClick={() => navigate("/profile")}
+          onClick={() => router.push("/profile")}
           className="flex items-center gap-2 text-left rounded-xl hover:bg-[#182234] p-2 transition"
           title="View Profile"
           aria-label="View Profile"

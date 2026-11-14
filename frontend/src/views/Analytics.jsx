@@ -1,4 +1,6 @@
 
+"use client";
+
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -63,6 +65,11 @@ function Analytics() {
   const [loading, setLoading] = useState(true);
   const [dailyLoading, setDailyLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const monthNames = [
     "January", "February", "March", "April",
@@ -161,7 +168,7 @@ function Analytics() {
     (_, index) => currentDate.getFullYear() - index
   );
 
-  if (loading) {
+  if (!mounted || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-400">
         <RefreshCw className="mr-3 animate-spin" size={22} />

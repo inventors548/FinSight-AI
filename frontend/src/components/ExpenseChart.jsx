@@ -1,4 +1,6 @@
 
+"use client";
+
 import { useEffect, useState } from "react";
 
 import {
@@ -17,6 +19,11 @@ import API from "../services/api";
 export default function ExpenseChart({ refreshKey }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Fetch monthly analytics from backend
   const fetchMonthlyAnalytics = async () => {
@@ -107,7 +114,7 @@ export default function ExpenseChart({ refreshKey }) {
         </p>
       </div>
 
-      {loading ? (
+      {(!mounted || loading) ? (
         <div className="h-72 flex items-center justify-center text-slate-400">
           Loading monthly analytics...
         </div>

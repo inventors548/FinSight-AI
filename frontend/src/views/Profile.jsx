@@ -1,4 +1,6 @@
 
+"use client";
+
 import { useEffect, useState } from "react";
 import {
   UserRound,
@@ -12,14 +14,14 @@ import {
   ShieldCheck
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 import API from "../services/api";
 import Header from "../components/Header";
 import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user, updateUser, logout } = useAuth();
 
   const [loading, setLoading] = useState(true);
@@ -200,7 +202,7 @@ export default function Profile() {
   const handleLogout = () => {
     logout();
     toast.success("Logged out successfully");
-    navigate("/login", { replace: true });
+    router.replace("/login");
   };
 
   const formattedDate = profile.createdAt
