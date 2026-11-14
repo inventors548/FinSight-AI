@@ -1,4 +1,4 @@
-
+﻿
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -19,6 +19,8 @@ const savingsGoalRoutes = require("./routes/savingsGoalRoutes");
 const csvImportRoutes = require("./routes/csvImportRoutes");
 
 const analyticsRoutes = require("./routes/analyticsRoutes");
+
+const advisorRoutes = require("./routes/advisorRoutes");
 
 // Error handling
 const errorHandler = require("./middleware/errorMiddleware");
@@ -72,6 +74,10 @@ app.use("/api/savings-goals", savingsGoalRoutes);
 app.use("/api/import/csv", csvImportRoutes);
 
 app.use("/api/analytics", analyticsRoutes);
+
+// Gemini-powered Financial Advisor routes (JWT protected)
+app.use("/api/advisor", advisorRoutes);
+
 
 // Handle unknown routes
 app.use((req, res) => {
