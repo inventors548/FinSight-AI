@@ -9,7 +9,7 @@ const API = axios.create({
   timeout: 15000
 });
 
-// Attach JWT token automatically to protected API requests
+// Attach JWT token automatically to protected API requests and prevent stale GET cache
 API.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
@@ -18,6 +18,18 @@ API.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+    }
+
+    // Prevent browser from returning stale cached responses for GET requests
+    if (config.method?.toLowerCase() === "get") {
+      config.headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+      config.headers["Pragma"] = "no-cache";
+      config.headers["Expires"] = "0";
+
+      config.params = {
+        ...config.params,
+        _t: Date.now()
+      };
     }
 
     // Allow Axios to set the multipart boundary automatically

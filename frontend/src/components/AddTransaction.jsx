@@ -143,7 +143,7 @@ export default function AddTransaction({ onClose, onSuccess }) {
 
       // Notify the dashboard that a transaction was created.
       if (onSuccess) {
-        onSuccess(response.data.transaction);
+        await onSuccess(response.data.transaction);
       }
 
       onClose();

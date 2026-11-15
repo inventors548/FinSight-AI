@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Wallet,
@@ -42,7 +42,7 @@ export default function Dashboard() {
     }).format(amount || 0);
   };
 
-  const fetchOverview = async () => {
+  const fetchOverview = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -61,15 +61,16 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchOverview();
-  }, [refreshKey]);
+  }, [fetchOverview, refreshKey]);
 
-  const handleTransactionSuccess = () => {
+  const handleTransactionSuccess = async () => {
     setShowAddTransaction(false);
     setRefreshKey((previous) => previous + 1);
+    await fetchOverview();
   };
 
   return (
@@ -154,11 +155,11 @@ export default function Dashboard() {
         {/* Charts and recent transactions */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div className="xl:col-span-2">
-            <ExpenseChart refreshKey={refreshKey} />
+            <ExpenseChart key={`chart-${refreshKey}`} refreshKey={refreshKey} />
           </div>
 
           <div>
-            <TransactionList refreshKey={refreshKey} />
+            <TransactionList key={`tx-list-${refreshKey}`} refreshKey={refreshKey} />
           </div>
         </div>
 

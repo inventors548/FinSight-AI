@@ -143,10 +143,11 @@ export default function Transactions() {
   };
 
   // Handle successful transaction creation
-  const handleTransactionSuccess = () => {
+  const handleTransactionSuccess = async () => {
     setShowAddTransaction(false);
     setPage(1);
     setFilter("all");
+    await fetchTransactions();
   };
 
   return (
