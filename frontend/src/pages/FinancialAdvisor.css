@@ -1,0 +1,405 @@
+
+.advisor-page {
+  min-height: 100vh;
+  padding: 28px;
+  background: #080d19;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.advisor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.advisor-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.advisor-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.16);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.advisor-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.advisor-header p {
+  color: #94a3b8;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.advisor-clear-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border: 1px solid #273449;
+  background: #111c2e;
+  color: #cbd5e1;
+  border-radius: 10px;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.advisor-clear-button:hover {
+  background: #1e293b;
+  color: white;
+}
+
+.advisor-clear-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.advisor-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+
+.advisor-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+.advisor-chat-container {
+  flex: 1;
+  min-height: 550px;
+  display: flex;
+  flex-direction: column;
+  background: #0d1727;
+  border: 1px solid #1e2b40;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.advisor-messages {
+  flex: 1;
+  padding: 26px;
+  overflow-y: auto;
+  min-height: 320px;
+  max-height: calc(100vh - 390px);
+}
+
+.advisor-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 25px;
+  max-width: 900px;
+}
+
+.advisor-message-user {
+  margin-left: auto;
+  flex-direction: row-reverse;
+}
+
+.advisor-avatar {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #93c5fd;
+  background: #172b49;
+}
+
+.advisor-message-user .advisor-avatar {
+  color: #c4b5fd;
+  background: #302454;
+}
+
+.advisor-message-error .advisor-avatar {
+  color: #fca5a5;
+  background: #451f2b;
+}
+
+.advisor-message-content {
+  max-width: 82%;
+  min-width: 0;
+}
+
+.advisor-message-user .advisor-message-content {
+  text-align: right;
+}
+
+.advisor-message-name {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+
+.advisor-message-bubble {
+  padding: 15px 17px;
+  border: 1px solid #25364d;
+  background: #142136;
+  color: #e2e8f0;
+  font-size: 14px;
+  line-height: 1.8;
+  border-radius: 4px 15px 15px 15px;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.advisor-message-bubble strong {
+  color: #93c5fd;
+  font-weight: 700;
+}
+
+.advisor-message-user .advisor-message-bubble {
+  background: #173e76;
+  border-color: #24559a;
+  border-radius: 15px 4px 15px 15px;
+  color: #eff6ff;
+}
+
+.advisor-message-error .advisor-message-bubble {
+  border-color: #7f1d1d;
+  background: #351923;
+  color: #fecaca;
+}
+
+.advisor-typing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #94a3b8;
+}
+
+.advisor-spinner {
+  animation: advisor-spin 1s linear infinite;
+}
+
+@keyframes advisor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.advisor-suggestions {
+  padding: 0 26px 22px;
+}
+
+.advisor-suggestions-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+  margin-bottom: 13px;
+}
+
+.advisor-suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.advisor-suggestion-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px;
+  min-height: 58px;
+  border: 1px solid #27364c;
+  border-radius: 12px;
+  background: #111e31;
+  color: #cbd5e1;
+  font-size: 12px;
+  text-align: left;
+  transition: 0.2s;
+}
+
+.advisor-suggestion-card svg {
+  flex-shrink: 0;
+  color: #60a5fa;
+}
+
+.advisor-suggestion-card:hover {
+  border-color: #3b82f6;
+  background: #172b49;
+  color: white;
+}
+
+.advisor-suggestion-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.advisor-input-area {
+  padding: 18px 24px 15px;
+  border-top: 1px solid #1e2b40;
+  background: #0b1422;
+}
+
+.advisor-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 9px 8px 16px;
+  border: 1px solid #334155;
+  background: #111e31;
+  border-radius: 13px;
+  transition: border-color 0.2s;
+}
+
+.advisor-input-wrapper:focus-within {
+  border-color: #3b82f6;
+}
+
+.advisor-input-wrapper textarea {
+  flex: 1;
+  resize: none;
+  outline: none;
+  border: none;
+  background: transparent;
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  max-height: 110px;
+  min-height: 28px;
+  padding: 5px 0;
+}
+
+.advisor-input-wrapper textarea::placeholder {
+  color: #64748b;
+}
+
+.advisor-send-button {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 11px;
+  color: white;
+  background: #2563eb;
+  transition: 0.2s;
+}
+
+.advisor-send-button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.advisor-send-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.advisor-input-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #64748b;
+  font-size: 11px;
+  margin-top: 10px;
+}
+
+.advisor-disclaimer {
+  text-align: center;
+  color: #64748b;
+  font-size: 11px;
+  margin: 15px 0 0;
+}
+
+@media (max-width: 1100px) {
+  .advisor-suggestions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .advisor-page {
+    padding: 17px 12px;
+  }
+
+  .advisor-header h1 {
+    font-size: 18px;
+  }
+
+  .advisor-header p {
+    font-size: 11px;
+  }
+
+  .advisor-logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .advisor-clear-button {
+    padding: 9px;
+  }
+
+  .advisor-clear-button span {
+    display: none;
+  }
+
+  .advisor-chat-container {
+    min-height: 580px;
+    border-radius: 13px;
+  }
+
+  .advisor-messages {
+    padding: 17px 12px;
+    max-height: 60vh;
+  }
+
+  .advisor-message-content {
+    max-width: 88%;
+  }
+
+  .advisor-message-bubble {
+    font-size: 13px;
+    padding: 12px;
+  }
+
+  .advisor-avatar {
+    width: 33px;
+    height: 33px;
+  }
+
+  .advisor-suggestions {
+    padding: 0 12px 17px;
+  }
+
+  .advisor-suggestions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .advisor-suggestion-card {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .advisor-input-area {
+    padding: 13px 12px;
+  }
+}

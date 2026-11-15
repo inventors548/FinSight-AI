@@ -42,7 +42,8 @@ const menuItems = [
   },
   {
     name: "AI Advisor",
-    icon: BrainCircuit
+    icon: BrainCircuit,
+    path: "/advisor"
   }
 ];
 
