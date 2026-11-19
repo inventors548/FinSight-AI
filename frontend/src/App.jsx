@@ -1,15 +1,15 @@
 
 import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-  Outlet
+    BrowserRouter,
+    Routes,
+    Route,
+    Navigate,
+    Outlet
 } from "react-router-dom";
 
 import {
-  AuthProvider,
-  useAuth
+    AuthProvider,
+    useAuth
 } from "./context/AuthContext";
 
 import ProtectedLayout from "./components/ProtectedLayout";
@@ -22,6 +22,7 @@ import SavingsGoals from "./pages/SavingsGoals";
 import Analytics from "./pages/Analytics";
 import Profile from "./pages/Profile";
 import FinancialAdvisor from "./pages/FinancialAdvisor";
+import ReceiptScanner from "./pages/ReceiptScanner";
 
 // Authentication Pages
 import Login from "./pages/Login";
@@ -29,108 +30,107 @@ import Register from "./pages/Register";
 
 // Protect private routes
 function ProtectedRoute() {
-  const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
 
-  return isAuthenticated
-    ? <Outlet />
-    : <Navigate to="/login" replace />;
+    return isAuthenticated
+        ? <Outlet />
+        : <Navigate to="/login" replace />;
 }
 
 // Redirect authenticated users away from login/register
 function PublicRoute() {
-  const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
 
-  return isAuthenticated
-    ? <Navigate to="/" replace />
-    : <Outlet />;
+    return isAuthenticated
+        ? <Navigate to="/" replace />
+        : <Outlet />;
 }
 
 // Application Routes
 function AppRoutes() {
-  return (
-    <Routes>
+    return (
+        <Routes>
 
-      {/* Public Routes */}
-      <Route element={<PublicRoute />}>
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+            {/* Public Routes */}
+            <Route element={<PublicRoute />}>
+                <Route
+                    path="/login"
+                    element={<Login />}
+                />
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
-      </Route>
+                <Route
+                    path="/register"
+                    element={<Register />}
+                />
+            </Route>
 
-      {/* Protected Routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route element={<ProtectedLayout />}>
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+                <Route element={<ProtectedLayout />}>
 
-          {/* Dashboard */}
-          <Route
-            path="/"
-            element={<Dashboard />}
-          />
+                    <Route
+                        path="/"
+                        element={<Dashboard />}
+                    />
 
-          {/* Transactions */}
-          <Route
-            path="/transactions"
-            element={<Transactions />}
-          />
+                    <Route
+                        path="/transactions"
+                        element={<Transactions />}
+                    />
 
-          {/* Budgets */}
-          <Route
-            path="/budgets"
-            element={<Budgets />}
-          />
+                    <Route
+                        path="/budgets"
+                        element={<Budgets />}
+                    />
 
-          {/* Savings Goals */}
-          <Route
-            path="/savings-goals"
-            element={<SavingsGoals />}
-          />
+                    <Route
+                        path="/savings-goals"
+                        element={<SavingsGoals />}
+                    />
 
-          {/* Analytics */}
-          <Route
-            path="/analytics"
-            element={<Analytics />}
-          />
+                    <Route
+                        path="/analytics"
+                        element={<Analytics />}
+                    />
 
-          {/* Financial Advisor - Gemini AI */}
-          <Route
-            path="/advisor"
-            element={<FinancialAdvisor />}
-          />
+                    <Route
+                        path="/advisor"
+                        element={<FinancialAdvisor />}
+                    />
 
-          {/* User Profile */}
-          <Route
-            path="/profile"
-            element={<Profile />}
-          />
+                    {/* Smart Receipt Scanner */}
+                    <Route
+                        path="/receipt-scanner"
+                        element={<ReceiptScanner />}
+                    />
 
-        </Route>
-      </Route>
+                    <Route
+                        path="/profile"
+                        element={<Profile />}
+                    />
 
-      {/* Unknown Routes */}
-      <Route
-        path="*"
-        element={<Navigate to="/" replace />}
-      />
+                </Route>
+            </Route>
 
-    </Routes>
-  );
+            {/* Unknown Routes */}
+            <Route
+                path="*"
+                element={<Navigate to="/" replace />}
+            />
+
+        </Routes>
+    );
 }
 
 // Main Application
 function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <BrowserRouter>
+                <AppRoutes />
+            </BrowserRouter>
+        </AuthProvider>
+    );
 }
 
 export default App;

@@ -9,8 +9,16 @@ const {
   generateGeminiResponse
 } = require("../services/geminiService");
 
+const {
+  categorizeTransaction
+} = require("../services/mlService");
+
 // ==========================================
 // FINANCIAL ADVISOR - GEMINI INTEGRATION
+// ==========================================
+
+// ==========================================
+// 1. ASK FINANCIAL ADVISOR
 // ==========================================
 
 const askFinancialAdvisor = async (req, res, next) => {
@@ -382,6 +390,275 @@ Respond in a helpful, professional, conversational tone.
   }
 };
 
+
+// ==========================================
+// 2. NATURAL LANGUAGE TRANSACTION PREVIEW
+// ==========================================
+
+const previewTransaction = async (req, res, next) => {
+  try {
+    const { command } = req.body;
+
+    // Validate command.
+    if (
+      typeof command !== "string" ||
+      !command.trim() ||
+      command.trim().length > 500
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a transaction command between 1 and 500 characters."
+      });
+    }
+
+    // Current date according to Indian Standard Time.
+    const currentDate = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(new Date());
+
+    // Gemini extraction prompt.
+    const prompt = `
+You are the transaction extraction engine for FinSight AI.
+
+Your task is to extract transaction details from a user's natural language command.
+
+Current date in India: ${currentDate}
+
+User command:
+"${command.trim()}"
+
+Return ONLY one valid JSON object.
+Do not return Markdown or code fences.
+
+Required JSON format:
+
+{
+  "intent": "create_transaction",
+  "clarificationQuestion": null,
+  "transaction": {
+    "title": null,
+    "amount": null,
+    "type": null,
+    "description": "",
+    "date": "${currentDate}",
+    "paymentMethod": "other",
+    "isRecurring": false
+  }
+}
+
+Rules:
+
+1. If the user clearly wants to add, record, log or save a transaction, use create_transaction.
+
+2. If the user is asking a financial question rather than requesting a transaction, use not_transaction.
+
+3. If required transaction information is missing, use needs_clarification.
+
+4. Transaction type must be income or expense.
+
+5. Amount must be a positive number without currency symbols.
+
+6. Extract a short meaningful transaction title.
+
+7. For today, use ${currentDate}.
+
+8. For yesterday, calculate the previous calendar date.
+
+9. Return dates in YYYY-MM-DD format.
+
+10. Supported payment methods:
+    cash, upi, card, bank_transfer, other.
+
+11. Map NEFT, IMPS and bank transfer to bank_transfer.
+
+12. If payment method is not mentioned, use other.
+
+13. Do not invent amounts, titles or transaction types.
+
+14. If amount, title, or type is missing, ask a clarification question.
+
+15. isRecurring should be true only if the user explicitly describes a recurring transaction.
+
+16. Return null for missing required fields.
+
+17. Do not include any extra JSON properties.
+`;
+
+    // Generate transaction details using Gemini.
+    const rawResponse = await generateGeminiResponse(prompt);
+
+    // Remove optional Markdown code fences.
+    const cleanedResponse = rawResponse
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const extracted = JSON.parse(cleanedResponse);
+
+    // Handle ordinary financial questions.
+    if (extracted.intent === "not_transaction") {
+      return res.status(200).json({
+        success: true,
+        intent: "not_transaction"
+      });
+    }
+
+    // Validate Gemini's intent.
+    if (
+      !["create_transaction", "needs_clarification"].includes(
+        extracted.intent
+      )
+    ) {
+      throw new Error("Gemini returned an invalid transaction intent.");
+    }
+
+    const transaction = extracted.transaction || {};
+
+    const title =
+      typeof transaction.title === "string"
+        ? transaction.title.trim()
+        : "";
+
+    const amount = Number(transaction.amount);
+    const type = transaction.type;
+    const date = transaction.date;
+
+    const allowedPaymentMethods = [
+      "cash",
+      "upi",
+      "card",
+      "bank_transfer",
+      "other"
+    ];
+
+    // Strict date validation.
+    const validDate =
+      typeof date === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(date) &&
+      !Number.isNaN(Date.parse(`${date}T00:00:00.000Z`)) &&
+      new Date(`${date}T00:00:00.000Z`)
+        .toISOString()
+        .slice(0, 10) === date;
+
+    // Validate required fields.
+    const missingFields =
+      !title ||
+      transaction.amount === null ||
+      transaction.amount === undefined ||
+      !Number.isFinite(amount) ||
+      amount <= 0 ||
+      !["income", "expense"].includes(type) ||
+      !validDate;
+
+    if (
+      extracted.intent === "needs_clarification" ||
+      missingFields
+    ) {
+      return res.status(200).json({
+        success: true,
+        intent: "needs_clarification",
+        clarificationQuestion:
+          typeof extracted.clarificationQuestion === "string" &&
+          extracted.clarificationQuestion.trim()
+            ? extracted.clarificationQuestion.trim()
+            : "Please specify the transaction title, amount, type (income or expense), and date."
+      });
+    }
+
+    // Validate payment method.
+    const paymentMethod = allowedPaymentMethods.includes(
+      transaction.paymentMethod
+    )
+      ? transaction.paymentMethod
+      : "other";
+
+    // Build a safe transaction object.
+    const safeTransaction = {
+      title,
+      amount,
+      type,
+      description:
+        typeof transaction.description === "string"
+          ? transaction.description.trim()
+          : "",
+      date,
+      paymentMethod,
+      isRecurring: transaction.isRecurring === true
+    };
+
+    // ==========================================
+    // ML-BASED EXPENSE CATEGORY PREDICTION
+    // ==========================================
+
+    let categoryPrediction = null;
+
+    if (type === "expense") {
+      try {
+        const mlResult = await categorizeTransaction(
+          safeTransaction.description || safeTransaction.title
+        );
+
+        if (
+          mlResult?.success &&
+          typeof mlResult?.data?.category === "string" &&
+          mlResult.data.category.trim()
+        ) {
+          categoryPrediction = {
+            category: mlResult.data.category.trim(),
+            confidence:
+              mlResult.data.confidence !== undefined &&
+              mlResult.data.confidence !== null &&
+              Number.isFinite(Number(mlResult.data.confidence))
+                ? Number(mlResult.data.confidence)
+                : null,
+            needsReview: Boolean(mlResult.data.needs_review)
+          };
+        }
+      } catch (mlError) {
+        // ML failure should not prevent the user from previewing.
+        console.error(
+          "Preview categorization unavailable:",
+          mlError.message
+        );
+      }
+    }
+
+    // IMPORTANT:
+    // No MongoDB transaction is created here.
+    // Saving happens only after explicit user confirmation.
+
+    return res.status(200).json({
+      success: true,
+      intent: "create_transaction",
+      message: "Transaction preview generated successfully.",
+      transaction: safeTransaction,
+      categoryPrediction
+    });
+
+  } catch (error) {
+    console.error("Transaction Preview Error:", error.message);
+
+    // Invalid Gemini JSON should not crash the server.
+    if (error instanceof SyntaxError) {
+      return res.status(502).json({
+        success: false,
+        message: "Unable to understand the transaction command. Please try again."
+      });
+    }
+
+    next(error);
+  }
+};
+
+
+// ==========================================
+// EXPORT CONTROLLERS
+// ==========================================
+
 module.exports = {
-  askFinancialAdvisor
+  askFinancialAdvisor,
+  previewTransaction
 };
