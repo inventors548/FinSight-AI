@@ -56,6 +56,7 @@
   border-radius: 10px;
   font-size: 13px;
   transition: 0.2s;
+  cursor: pointer;
 }
 
 .advisor-clear-button:hover {
@@ -233,6 +234,7 @@
   font-size: 12px;
   text-align: left;
   transition: 0.2s;
+  cursor: pointer;
 }
 
 .advisor-suggestion-card svg {
@@ -302,6 +304,7 @@
   color: white;
   background: #2563eb;
   transition: 0.2s;
+  cursor: pointer;
 }
 
 .advisor-send-button:hover:not(:disabled) {
@@ -328,6 +331,239 @@
   font-size: 11px;
   margin: 15px 0 0;
 }
+
+/* =========================================
+   VOICE COMMAND MICROPHONE BUTTON
+========================================= */
+
+.advisor-mic-button {
+  width: 43px;
+  height: 43px;
+  min-width: 43px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #1e293b;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.advisor-mic-button:hover:not(:disabled) {
+  background: #334155;
+  color: #ffffff;
+  border-color: #64748b;
+}
+
+.advisor-mic-button.listening {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #f87171;
+  animation: mic-pulse 1.2s infinite;
+}
+
+.advisor-mic-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes mic-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 9px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+/* =========================================
+   GEMINI TRANSACTION PREVIEW CARD
+========================================= */
+
+.advisor-transaction-card {
+  width: 100%;
+  max-width: 540px;
+  margin-top: 14px;
+  padding: 19px;
+  border: 1px solid #2b4262;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #14243b, #101b2e);
+  color: #e2e8f0;
+  text-align: left;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.advisor-transaction-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #293b53;
+}
+
+.advisor-transaction-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.advisor-transaction-card-header h3 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.advisor-transaction-card-header p {
+  margin: 4px 0 0;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.advisor-preview-badge {
+  margin-left: auto;
+  padding: 5px 9px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 20px;
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.1);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.advisor-transaction-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 0;
+}
+
+.advisor-transaction-amount span {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.advisor-transaction-amount strong {
+  font-size: 27px;
+  font-weight: 750;
+}
+
+.advisor-transaction-amount strong.expense {
+  color: #fca5a5;
+}
+
+.advisor-transaction-amount strong.income {
+  color: #86efac;
+}
+
+.advisor-transaction-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  padding: 16px 0;
+  border-top: 1px solid #293b53;
+  border-bottom: 1px solid #293b53;
+}
+
+.advisor-transaction-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.advisor-transaction-detail span {
+  color: #8293aa;
+  font-size: 11px;
+}
+
+.advisor-transaction-detail strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
+}
+
+.advisor-transaction-description {
+  grid-column: 1 / -1;
+}
+
+.advisor-transaction-warning {
+  margin: 15px 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 9px;
+  background: rgba(245, 158, 11, 0.07);
+  color: #fcd34d;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.advisor-transaction-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.advisor-transaction-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 39px;
+  padding: 9px 13px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.advisor-transaction-cancel {
+  border: 1px solid #475569;
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+.advisor-transaction-cancel:hover:not(:disabled) {
+  background: #334155;
+}
+
+.advisor-transaction-confirm {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: white;
+}
+
+.advisor-transaction-confirm:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.advisor-transaction-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
 
 @media (max-width: 1100px) {
   .advisor-suggestions-grid {
@@ -401,5 +637,41 @@
 
   .advisor-input-area {
     padding: 13px 12px;
+  }
+
+  .advisor-input-wrapper {
+    gap: 8px;
+    padding-left: 11px;
+  }
+
+  .advisor-mic-button {
+    width: 39px;
+    height: 39px;
+    min-width: 39px;
+  }
+
+  .advisor-send-button {
+    width: 39px;
+    height: 39px;
+  }
+
+  .advisor-transaction-card {
+    padding: 14px;
+  }
+
+  .advisor-transaction-details {
+    gap: 13px 10px;
+  }
+
+  .advisor-transaction-amount strong {
+    font-size: 24px;
+  }
+
+  .advisor-transaction-actions {
+    flex-direction: column-reverse;
+  }
+
+  .advisor-transaction-actions button {
+    width: 100%;
   }
 }

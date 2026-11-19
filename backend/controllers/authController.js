@@ -2,6 +2,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { sendLoginNotification } = require("../services/emailService");
 
 // Register a new user
 const register = async (req, res, next) => {
@@ -13,6 +14,17 @@ const register = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: "Name, email and password are required"
+      });
+    }
+
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid input format"
       });
     }
 
@@ -88,6 +100,16 @@ const login = async (req, res, next) => {
       });
     }
 
+    if (
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid input format"
+      });
+    }
+
     // Normalize email
     const normalizedEmail = email.trim().toLowerCase();
 
@@ -123,6 +145,18 @@ const login = async (req, res, next) => {
       { expiresIn: "7d" }
     );
 
+    // Send login notification email asynchronously.
+    // Email failure must never interrupt successful login.
+    sendLoginNotification({
+      name: user.name,
+      email: user.email
+    }).catch((error) => {
+      console.error(
+        "Login notification email failed:",
+        error.message
+      );
+    });
+
     // Return successful login response
     return res.status(200).json({
       success: true,
@@ -141,7 +175,6 @@ const login = async (req, res, next) => {
     next(error);
   }
 };
-
 
 
 // Get logged-in user's profile
@@ -163,6 +196,7 @@ const getProfile = async (req, res, next) => {
       message: "Profile retrieved successfully",
       user
     });
+
   } catch (error) {
     next(error);
   }
@@ -242,6 +276,7 @@ const updateProfile = async (req, res, next) => {
       message: "Profile updated successfully",
       user
     });
+
   } catch (error) {
     next(error);
   }
@@ -260,14 +295,19 @@ const changePassword = async (req, res, next) => {
       });
     }
 
-    if (typeof newPassword !== "string" || newPassword.length < 8) {
+    if (
+      typeof newPassword !== "string" ||
+      newPassword.length < 8
+    ) {
       return res.status(400).json({
         success: false,
         message: "New password must contain at least 8 characters"
       });
     }
 
-    const user = await User.findById(req.user.id).select("+password");
+    const user = await User.findById(req.user.id).select(
+      "+password"
+    );
 
     if (!user) {
       return res.status(404).json({
@@ -307,6 +347,7 @@ const changePassword = async (req, res, next) => {
       success: true,
       message: "Password changed successfully. Please log in again."
     });
+
   } catch (error) {
     next(error);
   }

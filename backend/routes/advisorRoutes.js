@@ -5,13 +5,17 @@ const router = express.Router();
 const protect = require("../middleware/authMiddleware");
 
 const {
-  askFinancialAdvisor
+  askFinancialAdvisor,
+  previewTransaction
 } = require("../controllers/advisorController");
 
-// All financial advisor routes require JWT authentication.
+// All Financial Advisor endpoints require authentication.
 router.use(protect);
 
-// POST /api/advisor/ask
+// Existing read-only Gemini Financial Advisor.
 router.post("/ask", askFinancialAdvisor);
+
+// New natural-language transaction preview.
+router.post("/transaction-preview", previewTransaction);
 
 module.exports = router;

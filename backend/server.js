@@ -15,12 +15,10 @@ const authRoutes = require("./routes/authRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const budgetRoutes = require("./routes/budgetRoutes");
 const savingsGoalRoutes = require("./routes/savingsGoalRoutes");
-
 const csvImportRoutes = require("./routes/csvImportRoutes");
-
 const analyticsRoutes = require("./routes/analyticsRoutes");
-
 const advisorRoutes = require("./routes/advisorRoutes");
+const receiptRoutes = require("./routes/receiptRoutes");
 
 // Error handling
 const errorHandler = require("./middleware/errorMiddleware");
@@ -33,9 +31,9 @@ app.use(helmet());
 
 // Enable frontend communication
 app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173"
-  })
+    cors({
+        origin: process.env.CLIENT_URL || "http://localhost:5173"
+    })
 );
 
 // Parse JSON requests
@@ -43,19 +41,19 @@ app.use(express.json({ limit: "1mb" }));
 
 // Root API
 app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "Welcome to FinSight AI API"
-  });
+    res.json({
+        success: true,
+        message: "Welcome to FinSight AI API"
+    });
 });
 
 // Health check
 app.get("/api/health", (req, res) => {
-  res.json({
-    success: true,
-    service: "FinSight AI Backend",
-    database: "Connected"
-  });
+    res.json({
+        success: true,
+        service: "FinSight AI Backend",
+        database: "Connected"
+    });
 });
 
 // Authentication routes
@@ -73,18 +71,21 @@ app.use("/api/savings-goals", savingsGoalRoutes);
 // CSV transaction import routes (JWT protected)
 app.use("/api/import/csv", csvImportRoutes);
 
+// Analytics routes
 app.use("/api/analytics", analyticsRoutes);
 
 // Gemini-powered Financial Advisor routes (JWT protected)
 app.use("/api/advisor", advisorRoutes);
 
+// Smart Receipt Scanner routes (JWT protected)
+app.use("/api/receipts", receiptRoutes);
 
 // Handle unknown routes
 app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: `Route not found: ${req.method} ${req.originalUrl}`
-  });
+    res.status(404).json({
+        success: false,
+        message: `Route not found: ${req.method} ${req.originalUrl}`
+    });
 });
 
 // Centralized error handler (must be last)
@@ -94,16 +95,17 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  try {
-    await connectDB();
+    try {
+        await connectDB();
 
-    app.listen(PORT, () => {
-      console.log(`FinSight AI Backend running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Server startup failed:", error.message);
-    process.exit(1);
-  }
+        app.listen(PORT, () => {
+            console.log(`FinSight AI Backend running on port ${PORT}`);
+        });
+
+    } catch (error) {
+        console.error("Server startup failed:", error.message);
+        process.exit(1);
+    }
 };
 
 startServer();
